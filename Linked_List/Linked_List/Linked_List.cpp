@@ -14,10 +14,12 @@ struct LL_Node sealed{		//liniked list Node
 };
 struct LL_InitNode sealed{		// Linked List initial Node
 	uint_fast32_t _length;		//contains the Length of linked list
+	int_fast32_t _maxval;
 	LL_Node* _headPtr;
 	LL_Node* _tailPtr;
 	LL_InitNode(){
 		_length=0;
+		_maxval=INT32_MIN;
 		_headPtr=NULL;
 		_tailPtr=NULL;
 	}
@@ -66,16 +68,17 @@ void fn_InsertLinkedList(int_fast32_t val,uint_fast32_t pos,LL_InitNode &startPT
 		NewNode->_nptr=t1;
 		startPTR._headPtr=NewNode;
 		startPTR._length++;
-		return;
-	}
-	if(pos==startPTR._length){			//insert at last Pos
+		if(startPTR._maxval<val)
+			startPTR._maxval=val;
+
+	}else if(pos==startPTR._length){			//insert at last Pos
 		NewNode->_nptr=NULL;
 		startPTR._tailPtr->_nptr=NewNode;
 		startPTR._tailPtr=NewNode;
 		startPTR._length++;
-		return;
-	}
-	{
+		if(startPTR._maxval<val)
+			startPTR._maxval=val;
+	}else{
 		LL_Node* t2 = startPTR._headPtr;
 		uint_fast32_t i(0); //loop till the pos to insert
 		while (i<pos){
@@ -93,10 +96,13 @@ void fn_InsertLinkedList(int_fast32_t val,uint_fast32_t pos,LL_InitNode &startPT
 		}
 		if(startPTR._length<pos&&!t2){			//out of range Exception
 			printf("list is Smaller than The position you specified");
+			delete NewNode;
 			return;
 		}else{										//insert at pos
 			NewNode->_nptr=t1->_nptr;
 			t1->_nptr=NewNode;
+			if(startPTR._maxval<val)
+				startPTR._maxval=val;
 		}
 		startPTR._length++;
 		t2=NULL;
@@ -114,12 +120,17 @@ void fn_EditLinkedList(uint_fast32_t pos,int_fast32_t val,LL_InitNode &startPTR)
 			++i;
 		}
 		t->_val=val;
+		if(startPTR._maxval<val)
+			startPTR._maxval=val;
 	}
 }
 void fn_PushBack(int_fast32_t val, LL_InitNode &startPTR){
 	LL_Node * NewNode =new LL_Node;
 	NewNode->_nptr=NULL;
 	NewNode->_val = val;
+	if(startPTR._maxval<val){
+		startPTR._maxval=val;
+	}
 	if(!startPTR._length){				//if Length = 0 means list is empty means tail pointer points to NULL
 		NewNode->_nptr=startPTR._headPtr;  
 		startPTR._headPtr=NewNode;
